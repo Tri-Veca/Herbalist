@@ -1,0 +1,4 @@
+{
+  "herb.tooltip.liquid.amount": "%s mB",
+  "herb.tooltip.liquid.amount.with.capacity": "\"%s / %s mB\""
+}

@@ -1,0 +1,10 @@
+{
+  "conditions": [
+    {
+      "condition": "block_state_property",
+      "block": "minecraft:grass"
+    }
+  ],
+  "addition": "herb:alfalfa_seeds",
+  "type": "herb:alfalfa_seeds_from_grass"
+}

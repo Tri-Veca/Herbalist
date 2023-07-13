@@ -1,0 +1,16 @@
+{
+  "type": "herb:tea_making",
+  "ingredients": [
+    {
+      "item": "herb:alfalfa_seeds"
+    }
+  ],
+  "fluid": {
+    "FluidName": "minecraft:water",
+    "Amount": 250
+  },
+  "output": {
+    "item": "herb:hunger_tea"
+
+  }
+}
