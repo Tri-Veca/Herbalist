@@ -11,7 +11,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class FluidSyncS2CPacket {
-    private final FluidStack fluidStack;
+public final FluidStack fluidStack;
     private final BlockPos pos;
 
     public FluidSyncS2CPacket(FluidStack fluidStack, BlockPos pos) {

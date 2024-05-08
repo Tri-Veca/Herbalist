@@ -2,7 +2,7 @@
   "type": "herb:tea_making",
   "ingredients": [
     {
-      "item": "herb:alfalfa_seeds"
+      "item": "herb:alfalfa"
     }
   ],
   "fluid": {

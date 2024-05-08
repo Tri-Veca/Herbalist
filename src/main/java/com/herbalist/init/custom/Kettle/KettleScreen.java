@@ -4,6 +4,7 @@ import com.herbalist.Herbalist;
 import com.herbalist.client.renderer.FluidStackRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.util.MouseUtil;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -40,7 +41,7 @@ public class KettleScreen extends AbstractContainerScreen<KettleMenu> {
     }
 
     private void renderFluidAreaTooltips(PoseStack pPoseStack, int pMouseX, int pMouseY, int x, int y) {
-        if(isHovering(pMouseX, pMouseY, x, y, 55, 15)) {
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, 55, 15)) {
             renderTooltip(pPoseStack, renderer.getTooltip(menu.getFluidStack(), TooltipFlag.Default.NORMAL),
                     Optional.empty(), pMouseX - x, pMouseY - y);
         }
@@ -56,18 +57,28 @@ public class KettleScreen extends AbstractContainerScreen<KettleMenu> {
         int y = (height - imageHeight) / 2;
 
         this.blit(pPoseStack, x, y, 0, 0, imageWidth, imageHeight);
+        renderer.render(pPoseStack, x + 55, y + 15, menu.getFluidStack());
+        renderProgressArrow(pPoseStack, x, y);
 
+
+    }
+    private void renderProgressArrow(PoseStack pPoseStack, int x, int y) {
         if(menu.isCrafting()) {
-            //blit(pPoseStack, x + 102, y + 41, 176, 0, 8, menu.getScaledProgress());
-            blit(pPoseStack, x + 123, y + 39, 176, 56, 26, menu.getScaledProgress());
-            renderer.render(pPoseStack, x + 55, y + 15, menu.getFluidStack());
+            blit(pPoseStack, x + 105, y + 33, 176, 0, 8, menu.getScaledProgress());
         }
     }
-
     @Override
     public void render(PoseStack pPoseStack, int mouseX, int mouseY, float delta) {
         renderBackground(pPoseStack);
         super.render(pPoseStack, mouseX, mouseY, delta);
         renderTooltip(pPoseStack, mouseX, mouseY);
+    }
+
+    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY) {
+        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, renderer.getWidth(), renderer.getHeight());
+    }
+
+    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, int width, int height) {
+        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, width, height);
     }
 }

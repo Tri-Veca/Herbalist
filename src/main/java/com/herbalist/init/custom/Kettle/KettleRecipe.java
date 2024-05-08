@@ -84,7 +84,7 @@ public class KettleRecipe implements Recipe<SimpleContainer> {
         }
 
         public static final Type INSTANCE = new Type();
-        public static final String ID = "team_making";
+        public static final String ID = "tea_making";
     }
 
     public static class Serializer implements RecipeSerializer<KettleRecipe> {

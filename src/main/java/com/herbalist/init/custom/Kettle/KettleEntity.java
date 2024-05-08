@@ -40,10 +40,7 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
 
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(3) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
-        }
+
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
@@ -99,16 +96,13 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
         };
     }
 
+
     @Override
     public Component getDisplayName() {
         return Component.nullToEmpty("Kettle");
     }
 
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
-        return new KettleMenu(pContainerId, pInventory, this, this.data);
-    }
+
 
     @Nonnull
     @Override
@@ -151,6 +145,8 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
         }
 
 
+
+
         @Override
         public boolean isFluidValid(FluidStack stack) {
             return stack.getFluid() == Fluids.WATER;
@@ -163,8 +159,8 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
 
     }
 
-    public void getFluidStack(FluidStack stack) {
-        this.FLUID_TANK.getFluid();
+    public FluidStack getFluidStack() {
+        return this.FLUID_TANK.getFluid();
     }
 
     private final Map<Direction, LazyOptional<WrappedHandler>> directionWrappedHandlerMap =
@@ -194,7 +190,7 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
+    protected void saveAdditional( CompoundTag tag) {
         tag.put("inventory", itemHandler.serializeNBT());
         tag.putInt("kettle.progress", progress);
         tag = FLUID_TANK.writeToNBT(tag);
@@ -207,6 +203,15 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
         itemHandler.deserializeNBT(nbt.getCompound("inventory"));
         progress = nbt.getInt("kettle.progress");
         FLUID_TANK.readFromNBT(nbt);
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
+        ModMessages.sendToClients(new FluidSyncS2CPacket(this.getFluidStack(), worldPosition));
+        return new KettleMenu(pContainerId, pInventory, this, this.data);
+
+
     }
 
     public void drops() {

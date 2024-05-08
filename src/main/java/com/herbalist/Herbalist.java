@@ -2,9 +2,13 @@ package com.herbalist;
 
 import com.herbalist.init.BlockInit;
 import com.herbalist.init.ItemInit;
+import com.herbalist.init.custom.InfuserItem;
+import com.herbalist.networking.ModMessages;
 import com.util.BlockEntityUtil;
 import com.util.MenuUtil;
 import com.util.RecipeUtil;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,17 +38,17 @@ public class Herbalist {
         MenuUtil.MENUS.register(bus);
         BlockEntityUtil.BLOCK_ENTITIES.register(bus);
         RecipeUtil.SERIALIZERS.register(bus);
+        ModMessages.register();
 
+        bus.addListener(this::setup);
+    }
 
-        bus.addListener(Herbalist::clientSetup);
-    }
-    private static void clientSetup(final FMLClientSetupEvent event) {
-       
-    }
     private void setup(final FMLCommonSetupEvent event) {
+        ItemBlockRenderTypes.setRenderLayer(BlockInit.ALFALFA_PLANT.get(), RenderType.cutout());
+        InfuserItem.initValidItems();
 
         event.enqueueWork(() -> {
-           
+
         });
     }
 }

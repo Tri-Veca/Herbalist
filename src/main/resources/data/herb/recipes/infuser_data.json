@@ -1,0 +1,21 @@
+{
+  "type": "herb:infusing",
+  "ingredients": [
+    {
+      "item": "herb:infuser"
+    },
+    {
+      "item": "herb:alfalfa"
+    },
+    {
+      "item": "herb:mint"
+    },
+    {
+      "item": "herb:lavender"
+    }
+  ],
+  "result": {
+    "item": "herb:infuser",
+    "count": 1
+  }
+}

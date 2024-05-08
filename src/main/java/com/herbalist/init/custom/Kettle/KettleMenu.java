@@ -36,7 +36,7 @@ public class KettleMenu extends AbstractContainerMenu {
         blockEntity = ((KettleEntity) entity);
         this.level = inv.player.level;
         this.data = data;
-        this.blockEntity.getFluidStack(fluidStack);
+        this.fluidStack = blockEntity.getFluidStack();
 
 
         addPlayerInventory(inv);
