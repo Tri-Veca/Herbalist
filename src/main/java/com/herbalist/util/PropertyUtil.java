@@ -1,4 +1,4 @@
-package com.util;
+package com.herbalist.util;
 
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 

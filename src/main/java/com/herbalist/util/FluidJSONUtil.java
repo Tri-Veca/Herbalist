@@ -1,4 +1,4 @@
-package com.util;
+package com.herbalist.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

@@ -3,7 +3,7 @@ package com.herbalist.init.custom.Kettle;
 import com.herbalist.inventory.WrappedHandler;
 import com.herbalist.networking.ModMessages;
 import com.herbalist.networking.packet.FluidSyncS2CPacket;
-import com.util.BlockEntityUtil;
+import com.herbalist.util.BlockEntityUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

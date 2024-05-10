@@ -1,4 +1,4 @@
-package com.util;
+package com.herbalist.util;
 
 import com.herbalist.init.custom.Kettle.KettleScreen;
 import net.minecraft.client.gui.screens.MenuScreens;

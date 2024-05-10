@@ -2,7 +2,7 @@ package com.herbalist.common.blend;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.util.RecipeUtil;
+import com.herbalist.util.RecipeUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

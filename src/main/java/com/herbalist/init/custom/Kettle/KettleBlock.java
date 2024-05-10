@@ -1,6 +1,6 @@
 package com.herbalist.init.custom.Kettle;
 
-import com.util.BlockEntityUtil;
+import com.herbalist.util.BlockEntityUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;

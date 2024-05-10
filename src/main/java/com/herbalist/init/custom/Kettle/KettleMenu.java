@@ -2,7 +2,7 @@ package com.herbalist.init.custom.Kettle;
 
 import com.herbalist.init.BlockInit;
 import com.herbalist.inventory.slots.ModResultSlot;
-import com.util.MenuUtil;
+import com.herbalist.util.MenuUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

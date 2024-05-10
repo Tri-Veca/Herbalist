@@ -1,4 +1,4 @@
-package com.util;
+package com.herbalist.util;
 
 import com.herbalist.Herbalist;
 import com.herbalist.init.BlockInit;

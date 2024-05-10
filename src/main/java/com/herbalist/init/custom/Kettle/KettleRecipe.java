@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 
 import com.google.gson.JsonObject;
 import com.herbalist.Herbalist;
-import com.util.FluidJSONUtil;
+import com.herbalist.util.FluidJSONUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
