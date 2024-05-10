@@ -17,6 +17,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -61,7 +62,7 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
     private int progress = 0;
 
     private int maxProgress = 120;
-
+    boolean isboiling = false;
 
 
 
@@ -200,6 +201,7 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
+        setChanged();
         itemHandler.deserializeNBT(nbt.getCompound("inventory"));
         progress = nbt.getInt("kettle.progress");
         FLUID_TANK.readFromNBT(nbt);
@@ -237,10 +239,33 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
         if (hasFluidItemInSourceSlot(pBlockEntity)) {
             transferItemFluidToFluidTank(pBlockEntity);
         }
+        if (pLevel != null && !pLevel.isClientSide) {
+            BlockPos below = pPos.below();
+            BlockState stateBelow = pLevel.getBlockState(below);
+
+            if (stateBelow.getBlock() instanceof CampfireBlock) {
+                // There's a campfire below the kettle
+                System.out.println("Campfire");
+            }
+        }
+
+
     }
+
     private static boolean hasEnoughFluid(KettleEntity pBlockEntity){
         return pBlockEntity.FLUID_TANK.getFluidAmount() >= 1000;
     }
+
+    public boolean checkIfKettleIsBoiling() {
+        if (level != null) {
+            BlockPos below = worldPosition.below();
+            BlockState stateBelow = level.getBlockState(below);
+            return stateBelow.getBlock() instanceof CampfireBlock;
+        }
+        return false;
+    }
+
+
 
     private static void transferItemFluidToFluidTank(KettleEntity pBlockEntity) {
         pBlockEntity.itemHandler.getStackInSlot(2).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(handler -> {

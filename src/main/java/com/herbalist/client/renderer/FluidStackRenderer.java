@@ -1,11 +1,14 @@
 package com.herbalist.client.renderer;
 import com.google.common.base.Preconditions;
+import com.herbalist.Herbalist;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 
 
+import com.util.TickHandler;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -24,11 +27,14 @@ import org.jetbrains.annotations.Nullable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.minecraft.client.gui.GuiComponent.blit;
+
 public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
     private static final NumberFormat nf = NumberFormat.getIntegerInstance();
     private static final int TEXTURE_SIZE = 16;
     private static final int MIN_FLUID_HEIGHT = 1; // ensure tiny amounts of fluid are still visible
-
+    private static final ResourceLocation BUBBLE_TEXTURE = new ResourceLocation(Herbalist.MOD_ID, "textures/gui/bubbles.png");
     private final int capacityMb;
     private final TooltipMode tooltipMode;
     /**
@@ -42,6 +48,8 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
     private final IDrawable overlay;
     private final int width;
     private final int height;
+
+
 
     enum TooltipMode {
         SHOW_AMOUNT,
@@ -73,6 +81,36 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         this.height = height;
         this.overlay = overlay;
     }
+
+
+    public void renderBubbles(PoseStack poseStack, int x, int y, int width, int height, boolean isBoiling) {
+        if (isBoiling) {
+
+            Minecraft minecraft = Minecraft.getInstance();
+            int tick = TickHandler.TICKS;
+            float offset = (tick % 16) / 16.0F;
+
+            minecraft.getTextureManager().bindForSetup(BUBBLE_TEXTURE);
+            RenderSystem.setShaderTexture(0, BUBBLE_TEXTURE);
+
+            // Get the BufferBuilder instance
+            BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+
+            // Start a new buffer for quads (since we're rendering a 2D sprite)
+            bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
+            // Add vertices for the sprite with the UV offset
+            bufferBuilder.vertex(x, y + height, 0).uv(0, offset + 1).endVertex();
+            bufferBuilder.vertex(x + width, y + height, 0).uv(1, offset + 1).endVertex();
+            bufferBuilder.vertex(x + width, y, 0).uv(1, offset).endVertex();
+            bufferBuilder.vertex(x, y, 0).uv(0, offset).endVertex();
+
+            // Draw the sprite
+            Tesselator.getInstance().end();
+        }
+    }
+
+
 
     @Override
     public void render(PoseStack poseStack, FluidStack fluidStack) {

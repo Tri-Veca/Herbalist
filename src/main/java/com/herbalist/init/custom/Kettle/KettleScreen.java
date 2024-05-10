@@ -44,6 +44,7 @@ public class KettleScreen extends AbstractContainerScreen<KettleMenu> {
         if(isMouseAboveArea(pMouseX, pMouseY, x, y, 55, 15)) {
             renderTooltip(pPoseStack, renderer.getTooltip(menu.getFluidStack(), TooltipFlag.Default.NORMAL),
                     Optional.empty(), pMouseX - x, pMouseY - y);
+
         }
     }
 
@@ -55,13 +56,19 @@ public class KettleScreen extends AbstractContainerScreen<KettleMenu> {
         RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
+        int bubbleWidth = (int)(0.1 * imageWidth);
+        int bubbleHeight = (int)(0.1 * imageHeight);
 
         this.blit(pPoseStack, x, y, 0, 0, imageWidth, imageHeight);
         renderer.render(pPoseStack, x + 55, y + 15, menu.getFluidStack());
+        boolean isBoiling = menu.getBlockEntity().checkIfKettleIsBoiling();
+        renderer.renderBubbles(pPoseStack, x+55, y+ 30, bubbleWidth, bubbleHeight, isBoiling);
         renderProgressArrow(pPoseStack, x, y);
 
 
     }
+
+
     private void renderProgressArrow(PoseStack pPoseStack, int x, int y) {
         if(menu.isCrafting()) {
             blit(pPoseStack, x + 105, y + 33, 176, 0, 8, menu.getScaledProgress());

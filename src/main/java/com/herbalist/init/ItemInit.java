@@ -26,6 +26,8 @@ public class ItemInit {
 
     public static final RegistryObject<Item> INFUSER = register("infuser",
             () -> new InfuserItem(new Item.Properties().tab(Herbalist.HERB)));
+    public static final RegistryObject<Item> EMPTY_TEA = register("empty_tea",
+            () -> new Item(new Item.Properties().tab(Herbalist.HERB)));
 
     public static final RegistryObject<Item> MINT_SEEDS = register("mint_seeds",
             () -> new ItemNameBlockItem(BlockInit.MINT_PLANT.get(),

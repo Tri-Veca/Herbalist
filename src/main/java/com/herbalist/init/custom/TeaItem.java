@@ -1,9 +1,11 @@
 package com.herbalist.init.custom;
 
+import com.herbalist.init.ItemInit;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.dedicated.Settings;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -34,6 +36,9 @@ public class TeaItem extends Item {
         this.SaturationModifier = pSaturationModifier;
         this.EffectInstance = pInstance;
     }
+
+
+
 
     public static void addEffectsToItemStack(ItemStack itemStack, MobEffectInstance... pInstance) {
         CompoundTag pTag = itemStack.getOrCreateTag();
@@ -89,11 +94,11 @@ public class TeaItem extends Item {
 
         if (player == null || !player.getAbilities().instabuild) {
             if (pStack.isEmpty()) {
-                return new ItemStack(Items.GLASS_BOTTLE);
+                return new ItemStack(ItemInit.EMPTY_TEA.get());
             }
 
             if (player != null) {
-                player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE));
+                player.getInventory().add(new ItemStack(ItemInit.EMPTY_TEA.get()));
             }
         }
 

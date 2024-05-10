@@ -20,7 +20,7 @@ public class BlockInit {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Herbalist.MOD_ID);
 
     public static final RegistryObject<Block> KETTLE = registerBlock("kettle",
-            () -> new KettleBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()), Herbalist.HERB);
+            () -> new KettleBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).randomTicks().noOcclusion()), Herbalist.HERB);
 
     public static final RegistryObject<Block> ALFALFA_PLANT = registerBlockWithoutBlockItem("alfalfa_plant",
             () -> new AlfalfaPlant(BlockBehaviour.Properties.copy(Blocks.WHEAT).noOcclusion()));
