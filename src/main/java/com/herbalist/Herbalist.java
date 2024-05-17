@@ -1,12 +1,11 @@
 package com.herbalist;
 
+import com.herbalist.common.event.HerbIdentifier;
 import com.herbalist.init.BlockInit;
 import com.herbalist.init.ItemInit;
 import com.herbalist.init.custom.InfuserItem;
 import com.herbalist.networking.ModMessages;
-import com.herbalist.util.BlockEntityUtil;
-import com.herbalist.util.MenuUtil;
-import com.herbalist.util.RecipeUtil;
+import com.herbalist.util.*;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -33,6 +32,8 @@ public class Herbalist {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         MinecraftForge.EVENT_BUS.register(this);
         ItemInit.ITEMS.register(bus);
+        MinecraftForge.EVENT_BUS.register(new HerbIdentifier());
+
         BlockInit.BLOCKS.register(bus);
         MenuUtil.MENUS.register(bus);
         BlockEntityUtil.BLOCK_ENTITIES.register(bus);
@@ -45,6 +46,8 @@ public class Herbalist {
     private void setup(final FMLCommonSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(BlockInit.ALFALFA_PLANT.get(), RenderType.cutout());
         InfuserItem.initValidItems();
+        HerbUtil.initialize();
+        KeybindHandler.registerKeyBindings();
 
         event.enqueueWork(() -> {
 

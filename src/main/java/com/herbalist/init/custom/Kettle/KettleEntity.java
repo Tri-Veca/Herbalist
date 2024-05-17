@@ -54,8 +54,6 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
         }
     };
 
-
-
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
     protected final ContainerData data;
@@ -245,7 +243,7 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
 
             if (stateBelow.getBlock() instanceof CampfireBlock) {
                 // There's a campfire below the kettle
-                System.out.println("Campfire");
+
             }
         }
 
