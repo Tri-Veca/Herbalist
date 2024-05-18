@@ -2,7 +2,7 @@
   "type": "herb:tea_making",
   "ingredients": [
     {
-      "item": "herb:alfalfa"
+      "item": "herb:infuser"
     }
   ],
   "fluid": {
@@ -10,7 +10,6 @@
     "Amount": 250
   },
   "output": {
-    "item": "herb:hunger_tea"
-
+    "item": "herb:tea"
   }
 }

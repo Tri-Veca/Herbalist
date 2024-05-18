@@ -2,6 +2,7 @@ package com.herbalist.init.custom;
 
 import com.herbalist.Herbalist;
 import com.herbalist.init.ItemInit;
+import com.herbalist.util.InitUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -31,18 +32,14 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Herbalist.MOD_ID)
 public class InfuserItem extends Item {
     private static final String TAG_HERBS = "Herbs";
-    private static final List<Item> VALID_ITEMS = new ArrayList<>();
+
 
 
     public InfuserItem(Properties properties) {
         super(properties);
     }
 
-    public static void initValidItems() {
-        VALID_ITEMS.add(ItemInit.LAVENDER.get());
-        VALID_ITEMS.add(ItemInit.ALFALFA.get());
-        VALID_ITEMS.add(ItemInit.MINT.get());
-    }
+
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         List<String> herbs = getHerbs(stack);
@@ -87,11 +84,11 @@ public class InfuserItem extends Item {
 
     // Method to check if an item can be stored in the infuser
     private static boolean isValidItem(Item item) {
-        return VALID_ITEMS.contains(item);
+        return InitUtil.VALID_ITEMS.contains(item);
     }
 
     // Method to get the list of stored herbs in the infuser
-    private List<String> getHerbs(ItemStack stack) {
+    public List<String> getHerbs(ItemStack stack) {
         CompoundTag nbt = stack.getTag();
         if (nbt != null && nbt.contains(TAG_HERBS)) {
             ListTag herbList = nbt.getList(TAG_HERBS, Tag.TAG_STRING);
@@ -99,6 +96,8 @@ public class InfuserItem extends Item {
             for (Tag tag : herbList) {
                 herbs.add(tag.getAsString());
             }
+            // Debug output
+            System.out.println("Herbs in infuser: " + herbs);
             return herbs;
         }
         return new ArrayList<>();

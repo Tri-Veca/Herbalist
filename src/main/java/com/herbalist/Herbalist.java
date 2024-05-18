@@ -45,8 +45,7 @@ public class Herbalist {
 
     private void setup(final FMLCommonSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(BlockInit.ALFALFA_PLANT.get(), RenderType.cutout());
-        InfuserItem.initValidItems();
-        HerbUtil.initialize();
+        InitUtil.initialize();
         KeybindHandler.registerKeyBindings();
 
         event.enqueueWork(() -> {

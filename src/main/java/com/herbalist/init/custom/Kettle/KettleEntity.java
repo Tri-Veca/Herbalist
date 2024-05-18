@@ -1,21 +1,29 @@
 package com.herbalist.init.custom.Kettle;
 
+import com.herbalist.init.ItemInit;
+import com.herbalist.init.custom.InfuserItem;
+import com.herbalist.init.custom.TeaItem;
 import com.herbalist.inventory.WrappedHandler;
 import com.herbalist.networking.ModMessages;
 import com.herbalist.networking.packet.FluidSyncS2CPacket;
 import com.herbalist.util.BlockEntityUtil;
+import com.herbalist.util.InitUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,10 +38,13 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -224,7 +235,19 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
     }
 
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, KettleEntity pBlockEntity) {
-        if (hasRecipe(pBlockEntity)) {
+        if (pLevel != null && !pLevel.isClientSide) {
+            BlockPos below = pPos.below();
+            BlockState stateBelow = pLevel.getBlockState(below);
+
+            if (stateBelow.getBlock() instanceof CampfireBlock) {
+                pBlockEntity.isboiling = true;
+                // There's a campfire below the kettle
+
+            } else {
+                pBlockEntity.isboiling = false;
+            }
+        }
+        if (hasRecipe(pBlockEntity) && pBlockEntity.isboiling) {
             pBlockEntity.progress++;
             setChanged(pLevel, pPos, pState);
             if (pBlockEntity.progress > pBlockEntity.maxProgress) {
@@ -237,17 +260,6 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
         if (hasFluidItemInSourceSlot(pBlockEntity)) {
             transferItemFluidToFluidTank(pBlockEntity);
         }
-        if (pLevel != null && !pLevel.isClientSide) {
-            BlockPos below = pPos.below();
-            BlockState stateBelow = pLevel.getBlockState(below);
-
-            if (stateBelow.getBlock() instanceof CampfireBlock) {
-                // There's a campfire below the kettle
-
-            }
-        }
-
-
     }
 
     private static boolean hasEnoughFluid(KettleEntity pBlockEntity){
@@ -342,17 +354,47 @@ public class KettleEntity extends BlockEntity implements MenuProvider {
         Optional<KettleRecipe> match = level.getRecipeManager()
                 .getRecipeFor(KettleRecipe.Type.INSTANCE, inventory, level);
 
-        if(hasRecipe(entity)) {
+        if (hasRecipe(entity)) {
             entity.FLUID_TANK.drain(entity.FLUID_TANK.getFluid().getAmount(), IFluidHandler.FluidAction.EXECUTE);
-            entity.itemHandler.extractItem(1,1, false);
+            entity.itemHandler.extractItem(1, 1, false);
 
             entity.itemHandler.setStackInSlot(0, new ItemStack(match.get().getResultItem().getItem(),
                     entity.itemHandler.getStackInSlot(0).getCount() + 1));
 
+            // Get the infuser and its herbs
+            ItemStack infuserStack = entity.itemHandler.getStackInSlot(1);
+            System.out.println("Item in slot 1: " + infuserStack.getItem());  // Debug line
 
+            // Check if the infuser is present and the necessary conditions are met
+            if (!(infuserStack.getItem() instanceof InfuserItem)) {
+                System.out.println("Crafting conditions not met. Exiting craftItem method.");
+                return;
+            }
+            if (infuserStack.getItem() instanceof InfuserItem) {
+                InfuserItem infuserItem = (InfuserItem) infuserStack.getItem();
+                List<String> herbs = infuserItem.getHerbs(entity.itemHandler.getStackInSlot(1));
+                System.out.println("HERB_EFFECT_MAP: " + InitUtil.HERB_EFFECT_MAP);
+                // Create a new tea item with the effects from the herbs
+                ItemStack tea = new ItemStack(ItemInit.TEA.get()); // Replace with actual method to create a new tea item
+                List<MobEffectInstance> effects = new ArrayList<>();
+                for (String herb : herbs) {
+                    // Add the effect from the herb to the tea
+                    Item herbItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(herb));
+                    System.out.println("Herb item: " + herbItem);
+                    MobEffectInstance effectInstance = InitUtil.HERB_EFFECT_MAP.get(herbItem);
+                    if (effectInstance != null) {
+                        effects.add(effectInstance);
+                        System.out.println("Added effect to tea: " + effectInstance);
+                    }
+                }
+                System.out.println("Attempting to add effects to tea...");
+                TeaItem.addEffectsToItemStack(tea, effects);
+                System.out.println("Effects added to tea: " + effects);
 
-
-            entity.resetProgress();
+                // Set the output to the new tea item
+                entity.itemHandler.setStackInSlot(0, tea);
+                entity.resetProgress();
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 package com.herbalist.common.event;
 
-import com.herbalist.util.HerbUtil;
+import com.herbalist.util.InitUtil;
 import com.herbalist.util.KeybindHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;
@@ -39,12 +39,12 @@ public class HerbIdentifier {
             if (mc.player != null) {
                 if (KeybindHandler.IDENTIFY_HERB.consumeClick()) {
                     Item heldItem = mc.player.getMainHandItem().getItem();
-                    if (HerbUtil.HERB_EFFECTS.containsKey(heldItem)) {
+                    if (InitUtil.HERB_IDENTIFY.containsKey(heldItem)) {
                         // Add the cooldown
                         mc.player.getCooldowns().addCooldown(heldItem, COOLDOWN_DURATION_IN_TICKS);
 
                         // Schedule the message to be sent after the cooldown
-                        String effect = HerbUtil.HERB_EFFECTS.get(heldItem);
+                        String effect = InitUtil.HERB_IDENTIFY.get(heldItem);
                         delayedMessages.add(new DelayedMessage(COOLDOWN_DURATION_IN_TICKS, heldItem+ " " + effect));
                     }
                 }

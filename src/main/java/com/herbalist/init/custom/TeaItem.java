@@ -21,68 +21,70 @@ import net.minecraft.world.level.gameevent.GameEvent;
 
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TeaItem extends Item {
     private static final int DRINK_DURATION = 32;
     private int Nutrition;
     private float SaturationModifier;
+    private static final String TAG_EFFECTS = "Effects";
 
-    private MobEffectInstance[] EffectInstance;
+    private List<MobEffectInstance> EffectInstances;
 
-    public TeaItem(Properties pProperties, int pNutrition, float pSaturationModifier, @Nullable MobEffectInstance... pInstance) {
+    public TeaItem(Properties pProperties, int pNutrition, float pSaturationModifier, List<MobEffectInstance> pInstances) {
         super(pProperties);
         this.Nutrition = pNutrition;
         this.SaturationModifier = pSaturationModifier;
-        this.EffectInstance = pInstance;
+        this.EffectInstances = pInstances;
     }
 
-
-
-
-    public static void addEffectsToItemStack(ItemStack itemStack, MobEffectInstance... pInstance) {
+    public static void addEffectsToItemStack(ItemStack itemStack, List<MobEffectInstance> pInstances) {
         CompoundTag pTag = itemStack.getOrCreateTag();
-        ListTag pEffectList = pTag.getList("CustomPotionEffects", 10);
+        ListTag pEffectList = new ListTag();
 
-        for (MobEffectInstance pEffect : pInstance) {
-            // Check if the effect is already present in the list
-            boolean effectFound = false;
-            for (int i = 0; i < pEffectList.size(); i++) {
-                MobEffectInstance existingEffect = MobEffectInstance.load(pEffectList.getCompound(i));
-                if (existingEffect.getEffect() == pEffect.getEffect()) {
-                    effectFound = true;
-                    break;
-                }
-            }
-
-            // If the effect is not already present, add it to the list
-            if (!effectFound) {
-                pEffectList.add(pEffect.save(new CompoundTag()));
-            }
+        for (MobEffectInstance pEffect : pInstances) {
+            pEffectList.add(pEffect.save(new CompoundTag()));
+            System.out.println("Added effect to item stack: " + pEffect);
         }
 
-        pTag.put("CustomPotionEffects", pEffectList);
+        pTag.put("Effects", pEffectList);
+        System.out.println("Effects in tea: " + pEffectList);
     }
 
-    public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pEntityLiving) {
+    // Method to get the effects from the tea item's NBT data
+    public List<MobEffectInstance> getEffects(ItemStack stack) {
+        CompoundTag nbt = stack.getOrCreateTag();
+        ListTag effects = nbt.getList("Effects", 10);
+        List<MobEffectInstance> effectInstances = new ArrayList<>();
+        for (int i = 0; i < effects.size(); i++) {
+            effectInstances.add(MobEffectInstance.load(effects.getCompound(i)));
+        }
+        return effectInstances;
+    }
 
+
+
+    @Override
+    public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pEntityLiving) {
         Player player = pEntityLiving instanceof Player ? (Player)pEntityLiving : null;
         if (player instanceof ServerPlayer) {
             CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer)player, pStack);
         }
 
         if (!pLevel.isClientSide) {
-            for(MobEffectInstance mobeffectinstance : PotionUtils.getMobEffects(pStack)) {
-                if (mobeffectinstance.getEffect().isInstantenous()) {
-                    mobeffectinstance.getEffect().applyInstantenousEffect(player, player, pEntityLiving, mobeffectinstance.getAmplifier(), 1.0D);
+            // Get the effects from the tea item's NBT data
+            List<MobEffectInstance> effects = getEffects(pStack);
+            for (MobEffectInstance effect : effects) {
+                if (effect.getEffect().isInstantenous()) {
+                    effect.getEffect().applyInstantenousEffect(player, player, pEntityLiving, effect.getAmplifier(), 1.0D);
                 } else {
-                    pEntityLiving.addEffect(new MobEffectInstance(mobeffectinstance));
+                    pEntityLiving.addEffect(new MobEffectInstance(effect));
                 }
             }
             FoodData foodData = player.getFoodData();
             foodData.setFoodLevel(foodData.getFoodLevel() + getNutrition());
             foodData.setSaturation(foodData.getSaturationLevel() + getSaturationModifier());
-
         }
 
         if (player != null) {
@@ -106,6 +108,11 @@ public class TeaItem extends Item {
         return pStack;
     }
 
+
+
+
+
+
     public int getUseDuration(ItemStack pStack) {
         return 32;
     }
@@ -125,9 +132,14 @@ public class TeaItem extends Item {
         return PotionUtils.getPotion(pStack).getName(this.getDescriptionId() + ".effect.");
     }
 
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        PotionUtils.addPotionTooltip(pStack, pTooltip, 1.0F);
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+        PotionUtils.addPotionTooltip(stack, tooltip, 1.0F);
+        // Debug output
+
     }
+
+
 
     public boolean isFoil(ItemStack pStack) {
         return false;
@@ -146,8 +158,8 @@ public class TeaItem extends Item {
     }
 
     @Nullable
-    public MobEffectInstance[] getEffectInstance() {
-        return EffectInstance;
+    public List<MobEffectInstance> getEffectInstance() {
+        return EffectInstances;
     }
 }
 

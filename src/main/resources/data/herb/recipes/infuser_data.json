@@ -3,16 +3,12 @@
   "ingredients": [
     {
       "item": "herb:infuser"
-    },
-    {
-      "item": "herb:alfalfa"
-    },
-    {
-      "item": "herb:mint"
-    },
-    {
-      "item": "herb:lavender"
     }
+  ],
+  "herbs": [
+    "herb:alfalfa",
+    "herb:mint",
+    "herb:lavender"
   ],
   "result": {
     "item": "herb:infuser",

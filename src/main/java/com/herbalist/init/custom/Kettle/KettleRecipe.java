@@ -4,17 +4,22 @@ import com.google.gson.JsonArray;
 
 import com.google.gson.JsonObject;
 import com.herbalist.Herbalist;
+import com.herbalist.init.custom.InfuserItem;
 import com.herbalist.util.FluidJSONUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class KettleRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
@@ -36,8 +41,40 @@ public class KettleRecipe implements Recipe<SimpleContainer> {
             return false;
         }
 
+        // Check if the infuser contains the correct herbs
+        ItemStack infuserStack = pContainer.getItem(0); // Replace with actual method to get the infuser
+        if (infuserStack.getItem() instanceof InfuserItem) {
+            InfuserItem infuserItem = (InfuserItem) infuserStack.getItem();
+            List<String> herbs = infuserItem.getHerbs(infuserStack);
+            for (String herb : herbs) {
+                Item herbItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(herb));
+                boolean herbInRecipe = false;
+                for (Ingredient ingredient : recipeItems) {
+                    if (ingredient.test(new ItemStack(herbItem))) {
+                        herbInRecipe = true;
+                        break;
+                    }
+                }
+                if (!herbInRecipe) {
+                    return false;
+                }
+
+            }
+            System.out.println("Recipe matches: " + (infuserStack.getItem() instanceof InfuserItem && herbs.equals(recipeItems)));
+            return infuserStack.getItem() instanceof InfuserItem && herbs.equals(recipeItems);
+
+
+        }
+        // Debug output
+
         return recipeItems.get(0).test(pContainer.getItem(1));
+
+
     }
+
+
+
+
     public FluidStack getFluid() {
         return fluidStack;
     }
